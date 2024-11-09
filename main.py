@@ -30,8 +30,8 @@ def ask_llm(nl_command, state=0):
     if state==0:
         prompt = [{
                     "role": "user",
-                    "content": "I'm computer program created to assist a human. Currently the human is working on"
-                    f"a DevOps task. He asked me to '{nl_command}'. Please tell me "
+                    "content": "I'm computer program created to assist a human by running shell commands."
+                    f"The human asked me to '{nl_command}'. Please tell me "
                     "what shell commands to run to do the activity." 
                     "Think about what more information you need and ask them." 
                     "Please respond with a JSON format text in the following manner and don't include anything else" 
@@ -50,7 +50,6 @@ def ask_llm(nl_command, state=0):
                                     "response": ["ssh -i 'keyfile.pem' user1@server"]
                                     }
                                """
-
                 }]
     # Responding to information request
     if state==1:
@@ -75,13 +74,18 @@ def execute_user_request(nl_command, state=0):
             print(f"Following commands will run {commands}")
             # TODO: Add user input to verify
             for command in commands:
-                print(f"running shell commands {command}")
-                success, cmd_result = run_shell_command(command)
-                if success:
-                    print(cmd_result)
+                answer = input(f" Shall I run '{command}'? (Yes/ No) ")
+                if answer.lower()=='yes':
+                    print(f"running shell commands {command}")
+                    success, cmd_result = run_shell_command(command)
+                    if success:
+                        print(cmd_result)
+                    else:
+                        # TODO: Error handling
+                        print(cmd_result)
+                        break
                 else:
-                    # TODO: Error handling
-                    print(cmd_result)
+                    print('Terminating command execution...')
                     break
             # If all commands ran successfully
             # TODO: Come up with a more intelligent message
