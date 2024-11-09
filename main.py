@@ -2,10 +2,14 @@ import subprocess
 from groq import Groq
 import json
 import sys
+import os
 
-# Read the API key from a file
-with open('/home/akalanka/projects/groq_key.txt', 'r') as file:
-    api_key = file.read().strip()
+# Read the API key from the environment variable
+api_key = os.environ.get('GROQ_API_KEY')
+
+if not api_key:
+    raise ValueError("Error: The GROQ_API_KEY environment variable is not set.")
+
 
 # Initialize the Groq client with the API key
 client = Groq(
@@ -70,7 +74,7 @@ def execute_user_request(nl_command, state=0):
         prompt_history.append({"role": "assistant", "content": json.dumps(res_parsed)})
         res_type = res_parsed.get("type")
         if res_type == "commands":
-            commands = res_parsed.get("response")
+            commands = ensure_list(res_parsed.get("response"))
             print(f"Following commands will run {commands}")
             # TODO: Add user input to verify
             for command in commands:
@@ -118,6 +122,16 @@ def get_more_info(prompts):
         answer = input(f"{prompt}: ")
         user_info[prompt] = answer
     return user_info
+
+def ensure_list(variable):
+    if isinstance(variable, str):
+        # Split the string by commas and remove any leading/trailing spaces
+        return [item.strip() for item in variable.split(',')]
+    elif isinstance(variable, list):
+        return variable
+    else:
+        raise ValueError("Input should be either a list or a comma-separated string.")
+
 
 def run_shell_command(command):
     try:
