@@ -10,4 +10,4 @@ Shelly us a simple command line tool which can convert natural language instruct
  - Install Python dependencies `pip install -r requirements.txt`
  - Obtain a (free) API key from [Groq](https://console.groq.com/keys)
  - Set the GROQ_API_KEY environment variable to the Groq key.
- - Set the alias so that Shelly can be accessed from any working directory easily. `alias shelly='/home/<path to venv>/venv/bin/python3 /<path to the local repo>/shelly/main.py'
+ - Set the alias so that Shelly can be accessed from any working directory easily. `alias shelly='/home/<path-to-venv>/venv/bin/python3 /<path-to-the-local-repo>/shelly/main.py'
