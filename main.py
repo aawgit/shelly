@@ -34,9 +34,10 @@ def ask_llm(nl_command, state=0):
     if state==0:
         prompt = [{
                     "role": "user",
-                    "content": "I'm computer program created to assist a human by running shell commands."
+                    "content": "You only speak JSON. I'm computer program created to assist a human by running shell commands."
                     f"The human asked me to '{nl_command}'. Please tell me "
-                    "what shell commands to run to do the activity." 
+                    "what shell commands to run to do the activity."
+                    "If I need to run multiple commands, please return them in the correct order"
                     "Think about what more information you need and ask them." 
                     "Please respond with a JSON format text in the following manner and don't include anything else" 
                     "in the response."
