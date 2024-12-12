@@ -34,7 +34,7 @@ def execute_command(user_input, conn):
     """Handle user input, execute command, and persist result."""
     try:
         # Process natural language command (using your existing logic)
-        success, result = execute_user_request(user_input)
+        execute_user_request(user_input)
 
         # Persist the command and result in the database
         # with conn:
@@ -44,7 +44,7 @@ def execute_command(user_input, conn):
         #     ''', (user_input, result))
 
         # Display result
-        print(result if success else f"Error: {result}")
+        # print(result if success else f"Error: {result}")
     except Exception as e:
         print(f"An error occurred: {e}")
 

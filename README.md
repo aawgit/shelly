@@ -2,7 +2,9 @@
 Shelly us a simple command line tool which can convert natural language instructions to Linux shell commands and execute them. It uses a LLM in the back end and currently supports LLAMA on [Groq](https://console.groq.com/keys).
 
 ## Example usage
-`$ shelly "Commit the current version of this repo and push to the main branch. Use an appropriate message"`
+`$ shelly 
+"Welcome to Shelly! Type your commands below (type 'exit' to quit):"
+">> "Commit the current version of this repo and push to the main branch. Use an appropriate message"`
 
 ## Setup
  - Clone the repo

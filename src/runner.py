@@ -11,6 +11,8 @@ def execute_user_request(nl_command, state=0):
     global current_directory
     prompt_history = []
     res_parsed, prompt_0, state = ask_llm(nl_command, state)
+    success = True
+    result = ""
     if res_parsed != -1:
         prompt_history.extend(prompt_0)
         prompt_history.append({"role": "assistant", "content": json.dumps(res_parsed)})
@@ -24,14 +26,17 @@ def execute_user_request(nl_command, state=0):
                 if answer.lower() == 'yes':
                     print(f"Running shell command: {command}")
                     success, cmd_result = run_shell_command(command)
+                    result = cmd_result
                     if success:
                         print(cmd_result)
                     else:
                         # TODO: Error handling
                         print(cmd_result)
+                        success = False
                         break
                 else:
                     print('Terminating command execution...')
+                    success = False
                     break
             # If all commands ran successfully
             # TODO: Come up with a more intelligent message
@@ -46,8 +51,11 @@ def execute_user_request(nl_command, state=0):
         else:
             # TODO: Create a restore point and retry from there
             print("Sorry, couldn't understand the LLM's response. You may try again.")
+            success = False
     else:
         print("Sorry, couldn't understand the LLM's response. You may try again.")
+        success = False
+    return success, result
 
 
 def get_more_info(prompts):
