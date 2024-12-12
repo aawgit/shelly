@@ -1,10 +1,14 @@
 import json
 import subprocess
+import os
 
 from src.llm import ask_llm, ensure_list
 
+# Keep track of the current working directory
+current_directory = os.getcwd()
 
 def execute_user_request(nl_command, state=0):
+    global current_directory
     prompt_history = []
     res_parsed, prompt_0, state = ask_llm(nl_command, state)
     if res_parsed != -1:
@@ -17,8 +21,8 @@ def execute_user_request(nl_command, state=0):
             # TODO: Add user input to verify
             for command in commands:
                 answer = input(f" Shall I run '{command}'? (Yes/ No) ")
-                if answer.lower()=='yes':
-                    print(f"running shell commands {command}")
+                if answer.lower() == 'yes':
+                    print(f"Running shell command: {command}")
                     success, cmd_result = run_shell_command(command)
                     if success:
                         print(cmd_result)
@@ -41,9 +45,9 @@ def execute_user_request(nl_command, state=0):
             execute_user_request(llm_input, state)
         else:
             # TODO: Create a restore point and retry from there
-            print("Sorry, couldn't understand the LLMs response. You may try again.")
+            print("Sorry, couldn't understand the LLM's response. You may try again.")
     else:
-        print("Sorry, couldn't understand the LLMs response. You may try again.")
+        print("Sorry, couldn't understand the LLM's response. You may try again.")
 
 
 def get_more_info(prompts):
@@ -64,11 +68,25 @@ def get_more_info(prompts):
 
 
 def run_shell_command(command):
+    global current_directory
     try:
-        # Run the shell command
-        result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
-        # Return the command output
-        return True, result.stdout
+        # Check if the command is a directory change
+        if command.startswith("cd "):
+            # Extract the target directory
+            target_directory = command[3:].strip()
+            # Change the current directory
+            new_directory = os.path.join(current_directory, target_directory)
+            if os.path.isdir(new_directory):
+                current_directory = os.path.abspath(new_directory)
+                os.chdir(current_directory)
+                return True, f"Changed directory to: {current_directory}"
+            else:
+                return False, f"Directory does not exist: {new_directory}"
+        else:
+            # Run the shell command in the current directory
+            result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True, cwd=current_directory)
+            # Return the command output
+            return True, result.stdout
     except subprocess.CalledProcessError as e:
         # Return the error output if the command fails
         return False, e.stderr
